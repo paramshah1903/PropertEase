@@ -2,9 +2,20 @@ import React, { useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { serverTimestamp, setDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,7 +28,52 @@ export default function SignIn() {
       [e.target.id]: e.target.value,
     }));
   }
-  //the square brackets are used to dynamically assign the name of an object property
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+      //inside the createUserWithEmailAndPassword we need to pass the earlier created auth instance which we had created using the getAuth() method
+      //along with that we pass the email and password
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // The line of code updateProfile(auth.currentUser, { displayName: name, }); is used to update the profile of the current user in Firebase. The updateProfile() function takes two arguments: the current user and an object that contains the profile information that you want to update.
+      // The displayName property is used to update the user's display name. The updateProfile() function is an asynchronous function, so the await keyword is used to wait for the function to complete before continuing execution.
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
+      // The line of code const user = userCredentials.user; is used to assign the user variable to the value of the user property of the userCredentials object. The userCredentials object is returned by the createUserWithEmailAndPassword() function, which is used to create a new user in Firebase.
+      // The user object contains information about the user, such as their email address, password, and display name. The user object is a valuable resource for accessing information about the user in your Firebase app.
+      const user = userCredentials.user;
+
+      //we dont want to store the password in the database so we first create a copy of the formData and remove the password from it
+      const fromDataCopy = { ...formData };
+      delete fromDataCopy.password;
+      fromDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), fromDataCopy);
+      // The line of code await setDoc(doc(db, "users", user.uid), fromDataCopy); is used to set the value of a document in Firestore. The doc() function creates a reference to a document in the users collection. The setDoc() function then sets the value of the document to the value of the fromDataCopy object.
+      // The setDoc() function is an asynchronous function, so the await keyword is used to wait for the function to complete before continuing execution.
+      // The db variable is a reference to the Firestore database. The user.uid variable is the unique identifier of the user. The fromDataCopy object is an object that contains the data that you want to set for the document
+      console.log(user);
+
+      //the toast.success to show a success notification while the toast.error to display an error
+      //toast is global component and just like Header it is defined outside the <Routes> in the app.js file
+      toast.success("Signed Up Successfully");
+      //to directly navigate to the home page we used the useNaviagte from the "react-router-dom"
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong with the registration");
+    }
+  }
+
   return (
     <diV>
       <section>
@@ -31,7 +87,7 @@ export default function SignIn() {
             />
           </div>
           <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-            <form>
+            <form onSubmit={onSubmit}>
               <input
                 type="text"
                 id="name"
