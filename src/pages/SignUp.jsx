@@ -53,6 +53,7 @@ export default function SignIn() {
       const user = userCredentials.user;
 
       //we dont want to store the password in the database so we first create a copy of the formData and remove the password from it
+      //while signing up the password is automatically hashed and stored inside the firebase auth
       const fromDataCopy = { ...formData };
       delete fromDataCopy.password;
       fromDataCopy.timestamp = serverTimestamp();

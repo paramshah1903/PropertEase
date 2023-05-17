@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { signInWithEmailAndPassword, auth, getAuth } from "firebase/auth";
+import { toast } from "react-toastify";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const { email, password } = formData;
@@ -12,6 +15,24 @@ export default function SignIn() {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  }
+  async function onSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // The signInWithEmailAndPassword() method is a method that is used to sign in a user with an email address and password. The method takes three arguments: the Firebase Authentication instance, the email address, and the password. The method returns a promise that resolves with the result of the sign-in operation. The result of the sign-in operation contains information about the signed-in user, such as their email address and ID token.
+      // The signInWithEmailAndPassword() method works by first validating the email address and password. If the email address and password are valid, the method then attempts to sign in the user with the Firebase Authentication service. If the sign-in is successful, the method returns a promise that resolves with the result of the sign-in operation. The result of the sign-in operation contains information about the signed-in user, such as their email address and ID token.
+
+      if (userCredentials.user) navigate("/");
+    } catch (error) {
+      toast.error("Wrong User Credentials");
+    }
   }
   //the square brackets are used to dynamically assign the name of an object property
   return (
@@ -27,7 +48,7 @@ export default function SignIn() {
             />
           </div>
           <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-            <form>
+            <form onSubmit={onSubmit}>
               <input
                 type="email"
                 id="email"

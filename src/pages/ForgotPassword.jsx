@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { toast } from "react-toastify";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
   function onChange(e) {
     setEmail(e.target.value);
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      //this method sendPasswordResetEmail will simply take the auth instance and email as parameters and send the reset pwd email
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Successfully sent reset link");
+    } catch (error) {
+      toast.error("Could not send reset password");
+    }
   }
 
   return (
@@ -22,7 +36,7 @@ export default function ForgotPassword() {
             />
           </div>
           <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-            <form>
+            <form onSubmit={onSubmit}>
               <input
                 type="email"
                 id="email"
@@ -37,7 +51,7 @@ export default function ForgotPassword() {
                 whitespace-nowrap class prevents text from wrapping within an
                 element. Newlines and spaces will be collapsed. */}
                 <p>
-                  Don't have and account?
+                  Don't have an account?
                   <Link
                     to="/sign-up"
                     className="text-red-600 hover:text-red-300 transition duration-200 ease-in-out"
@@ -46,7 +60,7 @@ export default function ForgotPassword() {
                   </Link>
                 </p>
                 <Link
-                  to="/forgot-password"
+                  to="/sign-in"
                   className="text-blue-600 hover:text-blue-300 transition duration-200 ease-in-out"
                 >
                   Sign In Instead
