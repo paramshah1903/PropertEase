@@ -94,6 +94,7 @@ export default function Profile() {
                 Do you want to change your details?{" "}
                 <span
                   onClick={() => {
+                    //using short circuiting to call the onSubmit function when the changeDetail is true.
                     changeDetail && onSubmit();
                     setChangeDetail((prevState) => !prevState);
                   }}

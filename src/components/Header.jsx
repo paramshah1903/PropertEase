@@ -1,6 +1,8 @@
-import React from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 export default function Header() {
+  const [pageState, setPageState] = useState("Sign In");
   const location = useLocation();
   const navigate = useNavigate();
   console.log(location.pathname);
@@ -10,8 +12,19 @@ export default function Header() {
     }
     return false;
   }
+  const auth = getAuth();
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setPageState("Profile");
+      } else {
+        setPageState("Sign In");
+      }
+    });
+  }, [auth]);
+  //this useEffect would be run whenever the auth is changed i.e its dependancy us on auth
   return (
-    <div className="bg-white border-b shadow-sm sticky top-0 z-50">
+    <div className="bg-white border-b shadow-sm sticky top-0 z-40">
       <header className="flex items-center justify-between px-5 max w max-w-6xl m-auto">
         <div>
           <img
@@ -43,13 +56,12 @@ export default function Header() {
             </li>
             <li
               className={`cursor-pointer py-3 font-semibold text-sm text-gray-400 border-b-[3px] border-b-transparent ${
-                pathMatchRoute("/sign-in")
-                  ? "text-black border-b-yellow-500"
-                  : ""
+                (pathMatchRoute("/sign-in") || pathMatchRoute("/profile")) &&
+                "text-black border-b-yellow-500"
               }`}
-              onClick={() => navigate("/sign-in")}
+              onClick={() => navigate("/profile")}
             >
-              Sign In
+              {pageState}
             </li>
           </ul>
         </div>
