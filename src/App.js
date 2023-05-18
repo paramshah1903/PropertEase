@@ -6,6 +6,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import Offers from "./pages/Offers";
 import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,7 +16,13 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
+
+        {/* The purpose of the outer <Route> with <PrivateRoute /> as the element is to conditionally render the inner routes based on the authentication or authorization status. If the user is authenticated or authorized, the <Profile /> component will be rendered; otherwise, it can redirect the user to a login page or show an access denied message.
+        So, when a user navigates to /profile, React Router will check the outer route with the path /profile and render the component specified in its element prop, which is <PrivateRoute />. The <PrivateRoute /> component can then decide what to render based on the user's authentication or authorization status.
+         */}
+        <Route path="/profile" element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
