@@ -14,6 +14,7 @@ export default function SignIn() {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
+      //the square brackets are used to dynamically assign the name of an object property
     }));
   }
   async function onSubmit(e) {
@@ -34,7 +35,6 @@ export default function SignIn() {
       toast.error("Wrong User Credentials");
     }
   }
-  //the square brackets are used to dynamically assign the name of an object property
   return (
     <diV>
       <section>

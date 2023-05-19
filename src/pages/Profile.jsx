@@ -1,9 +1,10 @@
 import { getAuth, updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { db } from "../firebase";
+import { FcHome } from "react-icons/fc";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -111,6 +112,17 @@ export default function Profile() {
               </p>
             </div>
           </form>
+          <button
+            type="submit"
+            className="w-full rounded shadow-md hover:bg-blue-800 transition duration-150 ease-in-out hover:shadow-lg bg-blue-600 text-white px-4 py-3 font-medium uppercase text-lg "
+          >
+            <Link to="/create-listing">
+              <div className="flex justify-center items-center">
+                <FcHome className="mr-2 bg-white rounded-full text-2xl" />
+                Sell or rent your house
+              </div>
+            </Link>
+          </button>
         </div>
       </section>
     </>
