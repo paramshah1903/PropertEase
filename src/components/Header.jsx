@@ -22,7 +22,7 @@ export default function Header() {
       }
     });
   }, [auth]);
-  //this useEffect would be run whenever the auth is changed i.e its dependancy us on auth
+  //this useEffect would be run whenever the auth is changed i.e its dependancy is on auth
   return (
     <div className="bg-white border-b shadow-sm sticky top-0 z-40">
       <header className="flex items-center justify-between px-5 max w max-w-6xl m-auto">

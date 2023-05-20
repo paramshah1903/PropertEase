@@ -1,10 +1,19 @@
 import { getAuth, updateProfile } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { db } from "../firebase";
 import { FcHome } from "react-icons/fc";
+import ListingItem from "../components/ListingItem";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -20,6 +29,9 @@ export default function Profile() {
   const { name, email } = formData;
 
   const [changeDetail, setChangeDetail] = useState(false);
+
+  const [listings, setListings] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   function onLogout() {
     auth.signOut();
@@ -61,6 +73,48 @@ export default function Profile() {
       toast.error("Could not update the profile details!");
     }
   }
+
+  //The useEffect hook is used to define a function, fetchUserListings, that will be executed after the component is mounted or whenever the value of auth.currentUser.uid changes. The dependency array [auth.currentUser.uid] specifies that the effect should run whenever the auth.currentUser.uid value changes.
+
+  //Inside the fetchUserListings function, a reference to the "listings" collection in Firestore is created using collection(db, "listings"). The db variable is assumed to be a reference to your Firestore database.
+
+  //A query is constructed using the query function, which specifies the conditions for the query. In this case, the query filters documents where the "userRef" field is equal to the current user's UID (auth.currentUser.uid), and the results are ordered by the "timestamp" field in descending order.
+
+  //The getDocs function is used to asynchronously retrieve the documents that match the query from Firestore. The await keyword is used to pause the execution of the code until the query results are returned.
+
+  //The querySnap variable holds the snapshot of the query results. The forEach method is called on the snapshot to iterate over each document in the results.
+
+  //For each document, an object is created with the document ID (doc.id) and the document data (doc.data). This object is then pushed to the listings array.
+
+  //After iterating over all the documents, the listings array is set as the state using the setListings function. This will trigger a re-render of the component with the updated listings state.
+
+  //Finally, the setLoading function is called with false to indicate that the loading state is complete.
+
+  //The listings array is an array of objects, where each object represents a document retrieved from the Firestore query result. Each object has two properties:
+  //id: This property holds the unique identifier (doc.id) of the Firestore document.
+  //data: This property holds the actual data (doc.data) of the Firestore document.
+
+  useEffect(() => {
+    async function fetchUserListings() {
+      const listingRef = collection(db, "listings");
+      const q = query(
+        listingRef,
+        where("userRef", "==", auth.currentUser.uid),
+        orderBy("timestamp", "desc")
+      );
+      const querySnap = await getDocs(q);
+      let listings = [];
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setListings(listings);
+      setLoading(false);
+    }
+    fetchUserListings();
+  }, [auth.currentUser.uid]);
 
   return (
     <>
@@ -125,6 +179,22 @@ export default function Profile() {
           </button>
         </div>
       </section>
+      <div className="max-w-6xl mx-auto mt-4">
+        {!loading && listings.length > 0 && (
+          <>
+            <h2 className="text-center font-semibold text-2xl">My Listings</h2>
+            <ul>
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  id={listing.id}
+                  listing={listing.data}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
     </>
   );
 }
