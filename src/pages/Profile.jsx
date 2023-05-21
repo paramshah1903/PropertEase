@@ -1,6 +1,7 @@
 import { getAuth, updateProfile } from "firebase/auth";
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   orderBy,
@@ -116,6 +117,30 @@ export default function Profile() {
     fetchUserListings();
   }, [auth.currentUser.uid]);
 
+  //   The onDelete function takes a listingID parameter, representing the ID of the listing to be deleted.
+
+  // The function displays a confirmation dialog using window.confirm(). If the user confirms the deletion by clicking "OK," the code inside the if statement executes.
+
+  // Inside the if block, the deleteDoc function is called asynchronously. It appears to be deleting a document using Firebase Firestore, based on the doc and db objects. The await keyword ensures that the deletion operation completes before proceeding to the next step.
+
+  // After the deletion, the listings array is filtered using the filter method. It creates a new array called updatedListings that excludes the listing with the matching listingID. The filter function checks if each listing.id is not equal to listingID.
+
+  // The setListings function is called with updatedListings as an argument to update the state or variable that holds the listings data.
+
+  async function onDelete(listingID) {
+    if (window.confirm("Are you sure you want to delete??")) {
+      await deleteDoc(doc(db, "listings", listingID));
+      const updatedListings = listings.filter((listing) => {
+        return listing.id !== listingID;
+      });
+      setListings(updatedListings);
+      toast.success("Successfully deleted the listing");
+    }
+  }
+  //onEdit we simply navigate to a different route
+  function onEdit(listingID) {
+    navigate(`/edit-listing/${listingID}`);
+  }
   return (
     <>
       <section className="flex items-center justify-center flex-col">
@@ -127,7 +152,7 @@ export default function Profile() {
               id="name"
               value={name}
               disabled={!changeDetail}
-              //if the change detail is false then disabled will be true because we dont want to edit the value if change detail is set to false
+              //if the change detail is false then disabled will be true because we don't want to edit the value if change detail is set to false
               //the email cant be edited only the name can be edited its state is changed on clicking the edit button
               onChange={onChange}
               className={`w-full text-xl text-gray-700 mb-6 bg-white rounded transition ease-in-out ${
@@ -189,6 +214,11 @@ export default function Profile() {
                   key={listing.id}
                   id={listing.id}
                   listing={listing.data}
+                  onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
+                  // In this case, the anonymous arrow function serves as a callback or event handler that points to the onDelete function. It is not calling onDelete directly when the component is rendered, but rather when the associated event or action occurs.
+                  // The arrow function is created on-the-fly and provides a way to pass the listing.id argument to the onDelete function without invoking it immediately. It allows for deferred execution of the onDelete function with the specified argument, triggered by the event or action associated with the component.
+                  // So, you can say that the anonymous arrow function acts as a reference or pointer to the onDelete function, enabling the passing of arguments in a delayed manner.
                 />
               ))}
             </ul>
