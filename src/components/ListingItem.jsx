@@ -6,7 +6,7 @@ import { MdEdit } from "react-icons/md";
 export default function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
     <li className="flex relative flex-col m-[10px] bg-white justify-between items-center shadow-md hover:shadow-xl rounded-lg overflow-hidden transition duration-150 ease-in-out">
-      <Link className="contents" to={`category/${listing.type}/${id}`}>
+      <Link className="contents" to={`/category/${listing.type}/${id}`}>
         <img
           src={listing.imgUrls[0]}
           alt="house"

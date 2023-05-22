@@ -60,14 +60,33 @@ export default function CreateListing() {
     images,
   } = formData;
 
+  //Only a small part has changed for the EditListing page from the CreateListing page
+  //the changes include that whenever we go to EditListing page we already get the
+  //user inputted values we get it using the fetchListings function
+  //other change is that instead of saveDoc we use updateDoc
   const params = useParams();
-
+  //useParams to extract parameters from the URL
+  //apart from it here we ensure that only if the userRef(which has the id) is same as the id in the route only then the listing can be edited
   useEffect(() => {
     if (listing && listing.userRef !== auth.currentUser.uid) {
       toast.error("You cant edit this page");
       navigate("/");
     }
   }, [auth.currentUser.uid, listing, navigate]);
+
+  //   An inner asynchronous function fetchListings is defined to handle the actual fetching of the listing data.
+
+  // Inside fetchListings, a Firestore document reference (docRef) is created using the Firestore doc function. It specifies the document path as "listings" and the params.listingId value.
+
+  // The getDoc function is called with the docRef to retrieve the document snapshot (docSnap) asynchronously.
+
+  // The code checks if the document exists using docSnap.exists(). If it does exist, the code proceeds to update the component's state.
+
+  // The setListing function is called with docSnap.data() to update the state with the retrieved listing data.
+
+  // The setFormData function is called with { ...docSnap.data() } to update the form data state with the retrieved listing data.
+
+  // The setLoading function is called with false to indicate that the data fetching is complete.
 
   useEffect(() => {
     setLoading(true);
