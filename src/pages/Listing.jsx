@@ -13,13 +13,38 @@ import SwiperCore, {
 import "swiper/css/bundle";
 import { FaBath, FaBed, FaChair, FaParking, FaShare } from "react-icons/fa";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { getAuth } from "firebase/auth";
+import Contact from "../components/Contact";
 
 export default function Listing() {
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
+  const [contactLandlord, setContactLandlord] = useState(false);
+  const auth = getAuth();
   SwiperCore.use([Autoplay, Navigation, Pagination]);
+
+  //   the useEffect hook in React expects a synchronous function or a cleanup function to be returned. The reason for this is that useEffect is designed to handle side effects, such as data fetching, subscriptions, or DOM manipulation. These side effects are typically synchronous operations.
+
+  //   When using the async keyword with a function, it means that the function will return a promise. Promises are asynchronous constructs that represent the result of an asynchronous operation. However, useEffect doesn't directly handle promises as return values.
+
+  //     If you try to directly use an async function as the callback for useEffect, it will not work as expected. The returned promise from the async function is not interpreted as a cleanup function or synchronous operation by React, which can lead to unexpected behavior or errors.
+
+  //   Inside the callback function, an asynchronous function fetchListing is defined. This function will be responsible for fetching the data and updating the component's state.
+
+  //   The doc function is used from the Firebase Firestore library to create a reference to a specific document in the "listings" collection. The document ID is determined by params.listingId.
+
+  //   The getDoc function is called with the docRef to fetch the document snapshot asynchronously.
+
+  //   Using the await keyword, the code waits for the getDoc promise to resolve and then retrieves the docSnap representing the document snapshot.
+
+  //   If the docSnap exists (i.e., the document was found in the database), the data is extracted using docSnap.data(). This data represents the listing information.
+
+  //   The setListing function is called to update the component's state with the fetched listing data.
+
+  //   The setLoading function is called with false to indicate that the loading process is complete.
+
   useEffect(() => {
     async function fetchListing() {
       const docRef = doc(db, "listings", params.listingId);
@@ -82,7 +107,7 @@ export default function Listing() {
       )}
 
       <div className="flex flex-col md:flex-row max-w-6xl lg:mx-auto m-4 p-4 shadow-lg rounded-lg lg:space-x-5 bg-white">
-        <div className="w-full h-[200px] lg:h-[400px]">
+        <div className="w-full ">
           <p className="font-bold text-2xl mb-2 text-blue-900">
             {listing.name}-${" "}
             {listing.offer ? listing.discountedPrice : listing.regularPrice}
@@ -124,6 +149,33 @@ export default function Listing() {
               {listing.furnished ? `Furnished` : "Not Furnished"}
             </li>
           </ul>
+          {/* //, auth.currentUser?.uid is checking if the currentUser object exists
+          and has a property called uid. If it does, the expression evaluates to
+          true, indicating that the current user's uid is not equal to
+          listing.userRef. This condition is used to determine whether to render
+          the following code block. By using ?., the code ensures that if
+          auth.currentUser is null or undefined, the expression
+          auth.currentUser?.uid will also be null or undefined instead of
+          throwing an error. It provides a safe way to access nested properties
+          without causing runtime errors. */}
+          {auth.currentUser?.uid !== listing.userRef && !contactLandlord && (
+            <>
+              <div className="mt-6">
+                <button
+                  onClick={() => {
+                    setContactLandlord(true);
+                    console.log(contactLandlord);
+                  }}
+                  className="px-7 py-3 bg-blue-600 text-white font-semibold uppercase shadow:md hover:bg-blue-800 hover:shadow-xl rounded w-full text-center transition duration-150 ease-in-out"
+                >
+                  Contact Landlord
+                </button>
+              </div>
+            </>
+          )}
+          {contactLandlord && (
+            <Contact userRef={listing.userRef} listing={listing} />
+          )}
         </div>
         <div className="bg-blue-300 w-full h-[200px] lg:h-[400px] z-10 overflow-x-hidden"></div>
       </div>
