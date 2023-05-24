@@ -17,8 +17,23 @@ export default function Slider() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   SwiperCore.use([Autoplay, Navigation, Pagination]);
-  //all the times we define an async function in useEffect and then call it is because the callback function which we have inside the useEffect cant be an async function hence we first define an async function and then call it
+
+  // doc(db, "listings", params.listingId);
+  // The doc function is used to reference a specific document within a collection.
+  // It takes in three parameters: the Firestore database reference (db), the name of the collection (listings), and the ID of the specific document (params.listingId).
+  // This function returns a DocumentReference object that represents a specific document in the database.
+  // You can perform operations such as reading, writing, updating, or deleting the data in that specific document using the returned DocumentReference.
+
+  // collection(db, "listings"):
+  // The collection function is used to reference a collection within a Firestore database.
+  // It takes in two parameters: the Firestore database reference (db) and the name of the collection (listings).
+  // This function returns a CollectionReference object that represents a collection in the database.
+  // You can perform operations on the collection, such as querying the documents within it or adding new documents to the collection using the returned CollectionReference.
+
+  // To summarize, doc is used to reference a specific document within a collection, while collection is used to reference the entire collection itself. Both functions provide different levels of granularity in accessing and manipulating data within Firestore.
+
   useEffect(() => {
+    //all the times we define an async function in useEffect and then call it is because the callback function which we have inside the useEffect cant be an async function hence we first define an async function and then call it
     async function fetchListings() {
       const listingsRef = collection(db, "listings");
       const q = query(listingsRef, orderBy("timestamp", "desc"), limit("5"));
@@ -27,11 +42,11 @@ export default function Slider() {
       querySnap.forEach((doc) => {
         return listings.push({
           id: doc.id,
-          data: doc.data(),
+          data: doc.data(), //the .data() method is used to extract data from a firestore returned docSnap
         });
       });
       setListings(listings);
-      console.log(listings);
+      // console.log(listings);
       setLoading(false);
     }
     fetchListings();
@@ -59,6 +74,8 @@ export default function Slider() {
                 key={id}
                 onClick={() => navigate(`category/${data.type}/${id}`)}
               >
+                {/* //we display the slider with images by dynamically putting that url as the background image for the div
+                 */}
                 <div
                   style={{
                     background: `url(${data.imgUrls[0]}) center,no-repeat`,
