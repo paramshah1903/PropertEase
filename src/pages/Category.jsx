@@ -12,23 +12,24 @@ import { toast } from "react-toastify";
 import { db } from "../firebase";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
+import { useParams } from "react-router";
 
-export default function Offers() {
+export default function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchListing, setLastFetchListing] = useState(null);
+  const params = useParams();
   useEffect(() => {
     async function fetchListings() {
       try {
         const listingRef = collection(db, "listings");
         const q = query(
           listingRef,
-          where("offer", "==", true),
+          where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
           limit(4)
         );
         const querySnap = await getDocs(q);
-        //identifying which is the last fetched document from the query
         const lastVisible = querySnap.docs[querySnap.docs.length - 1];
         setLastFetchListing(lastVisible);
         const listings = [];
@@ -46,17 +47,15 @@ export default function Offers() {
       }
     }
     fetchListings();
-  }, []);
+  }, [params.categoryName]);
 
-  //in fetch more listings we return all the listings which were initially not visible
   async function fetchMoreListings() {
     try {
       const listingRef = collection(db, "listings");
       const q = query(
         listingRef,
-        where("offer", "==", true),
+        where("type", "==", params.categoryName),
         orderBy("timestamp", "desc"),
-        //this startAfter ensures we return listings which start after the last fetched listing
         startAfter(lastFetchListing),
         limit(4)
       );
@@ -85,7 +84,9 @@ export default function Offers() {
   }
   return (
     <div className="max-w-6xl mx-auto px-3">
-      <h1 className="text-center mt-6 font-bold text-3xl">Offers</h1>
+      <h1 className="text-center mt-6 mb-6 font-bold text-3xl">
+        {params.categoryName === "rent" ? "Places for Rent" : "Places for Sale"}
+      </h1>
       {!loading && listings && listings.length > 0 && (
         <>
           <main>
@@ -116,3 +117,4 @@ export default function Offers() {
     </div>
   );
 }
+//the category page is almost similar to the offers page the only change is that we dynamically extract from the url using useParams whether we want to fetch items for sale or rent
