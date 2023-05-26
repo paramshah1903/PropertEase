@@ -56,6 +56,16 @@ export default function Header() {
             </li>
             <li
               className={`cursor-pointer py-3 font-semibold text-sm text-gray-400 border-b-[3px] border-b-transparent ${
+                pathMatchRoute("/mortgage-calculator")
+                  ? "text-black border-b-yellow-500"
+                  : ""
+              }`}
+              onClick={() => navigate("/mortgage-calculator")}
+            >
+              Mortgage Calculator
+            </li>
+            <li
+              className={`cursor-pointer py-3 font-semibold text-sm text-gray-400 border-b-[3px] border-b-transparent ${
                 (pathMatchRoute("/sign-in") || pathMatchRoute("/profile")) &&
                 "text-black border-b-yellow-500"
               }`}
