@@ -4,7 +4,7 @@ import MortgageSliderInterest from "../components/MortgageSlider";
 import PieResult from "../components/PieResult";
 import { Container, Grid, Stack } from "@mui/material";
 import InterestSlider from "../components/InterestSlider";
-import TenureSelect from "./TenureSelect";
+import TenureSelect from "../components/TenureSelect";
 
 export default function MortgageCalculator() {
   const rupeeSymbol = "\u20B9";
