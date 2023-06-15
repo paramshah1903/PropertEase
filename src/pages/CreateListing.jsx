@@ -431,7 +431,7 @@ export default function CreateListing() {
               ></input>
               {type === "rent" && (
                 <div>
-                  <p className="w-full text-md">$/month</p>
+                  <p className="w-full text-md">&#8377;/month</p>
                 </div>
               )}
             </div>
@@ -454,7 +454,7 @@ export default function CreateListing() {
                 ></input>
                 {type === "rent" && (
                   <div>
-                    <p className="w-full text-md">$/month</p>
+                    <p className="w-full text-md">&#8377;/month</p>
                   </div>
                 )}
               </div>

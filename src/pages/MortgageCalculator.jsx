@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MortgageSlider from "../components/MortgageSlider";
-import MortgageSliderInterest from "../components/MortgageSlider";
+// import MortgageSliderInterest from "../components/MortgageSlider";
 import PieResult from "../components/PieResult";
 import { Container, Grid, Stack } from "@mui/material";
 import InterestSlider from "../components/InterestSlider";

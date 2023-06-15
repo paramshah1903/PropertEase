@@ -45,6 +45,9 @@ export default function Listing() {
   //   The setListing function is called to update the component's state with the fetched listing data.
 
   //   The setLoading function is called with false to indicate that the loading process is complete.
+  function formatPriceWithCommas(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
 
   useEffect(() => {
     async function fetchListing() {
@@ -110,8 +113,10 @@ export default function Listing() {
       <div className="flex flex-col md:flex-row max-w-6xl lg:mx-auto m-4 p-4 shadow-lg rounded-lg lg:space-x-5 bg-white">
         <div className="w-full ">
           <p className="font-bold text-2xl mb-2 text-blue-900">
-            {listing.name}-${" "}
-            {listing.offer ? listing.discountedPrice : listing.regularPrice}
+            {listing.name}-&#8377;{" "}
+            {listing.offer
+              ? formatPriceWithCommas(listing.discountedPrice)
+              : formatPriceWithCommas(listing.regularPrice)}
             {listing.type === "rent" ? "/month" : ""}
           </p>
           <p className="flex items-center mt-6 mb-3 font-semibold">
@@ -124,7 +129,11 @@ export default function Listing() {
             </p>
             {listing.offer && (
               <p className="w-full max-w-[200px] rounded-lg py-1.5  px-1 bg-green-800 text-white text-center text-xl font-semibold shadow-lg">
-                ${listing.regularPrice - listing.discountedPrice} Discount
+                &#8377;
+                {formatPriceWithCommas(
+                  listing.regularPrice - listing.discountedPrice
+                )}{" "}
+                Discount
               </p>
             )}
           </div>

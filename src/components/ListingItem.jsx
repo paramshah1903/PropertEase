@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+function formatPriceWithCommas(price) {
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export default function ListingItem({ listing, id, onEdit, onDelete }) {
   return (
     <li className="flex relative flex-col m-[10px] bg-white justify-between items-center shadow-md hover:shadow-xl rounded-lg overflow-hidden transition duration-150 ease-in-out">
@@ -30,10 +34,10 @@ export default function ListingItem({ listing, id, onEdit, onDelete }) {
           </div>
           <p className="font-semibold mt-0  truncate text-xl">{listing.name}</p>
           <p className="text-[#457b9d]">
-            $
+            &#8377;
             {listing.offer
-              ? listing.discountedPrice.toLocaleString()
-              : listing.regularPrice.toLocaleString()}
+              ? formatPriceWithCommas(listing.discountedPrice)
+              : formatPriceWithCommas(listing.regularPrice)}
             {listing.type === "rent" ? "/month" : ""}
           </p>
           <div className="flex justify-start space-x-1">

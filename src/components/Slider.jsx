@@ -57,6 +57,10 @@ export default function Slider() {
   if (listings.length === 0) {
     return <></>;
   }
+  function formatPriceWithCommas(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   return (
     listings && (
       <>
@@ -87,7 +91,11 @@ export default function Slider() {
                   {data.name}
                 </p>
                 <p className="text-white bg-[#e63946] absolute left-3 bottom-4 py-2 px-3 rounded-tl-3xl text-lg font-semibold ">
-                  ${data.offer ? data.discountedPrice : data.regularPrice} {` `}
+                  &#8377;
+                  {data.offer
+                    ? formatPriceWithCommas(data.discountedPrice)
+                    : formatPriceWithCommas(data.regularPrice)}{" "}
+                  {` `}
                   {data.type === "rent" ? "per month" : ""}
                 </p>
               </SwiperSlide>
